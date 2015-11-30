@@ -31,23 +31,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import org.lasarobotics.vision.android.Cameras;
-import org.lasarobotics.vision.detection.ColorBlobDetector;
-import org.lasarobotics.vision.detection.objects.Contour;
-import org.lasarobotics.vision.ftc.resq.Beacon;
-import org.lasarobotics.vision.image.Drawing;
-import org.lasarobotics.vision.image.Transform;
-import org.lasarobotics.vision.opmode.ManualVisionOpMode;
-import org.lasarobotics.vision.opmode.VisionExtensions;
-import org.lasarobotics.vision.opmode.VisionOpMode;
-import org.lasarobotics.vision.util.color.ColorGRAY;
-import org.lasarobotics.vision.util.color.ColorHSV;
-import org.lasarobotics.vision.util.color.ColorRGBA;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
+import org.lasarobotics.vision.test.android.Cameras;
+import org.lasarobotics.vision.test.opmode.VisionOpMode;
 import org.opencv.core.Size;
-
-import java.util.List;
 
 /**
  * TeleOp Mode
@@ -63,14 +49,18 @@ public class BasicVisionSample extends VisionOpMode {
         this.setCamera(Cameras.PRIMARY);
         this.setFrameSize(new Size(900, 900));
 
-        enableExtension(VisionExtensions.BEACON_COLOR);
+        enableExtension(Extensions.BEACON);
+        enableExtension(Extensions.QR);
     }
 
     @Override
     public void loop() {
         super.loop();
 
-        telemetry.addData("Beacon Color", beaconColor.toString());
+        telemetry.addData("Beacon Color", beacon.getAnalysis().toString());
+        telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
+        telemetry.addData("QR Error", qr.getErrorReason());
+        telemetry.addData("QR String", qr.getText());
         telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
         telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
     }
