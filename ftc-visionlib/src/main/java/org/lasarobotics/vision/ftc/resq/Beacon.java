@@ -39,6 +39,9 @@ public final class Beacon {
 
         //TODO Filter out bad contours - filtering currently ignored
 
+        //Get and store image size for analysis
+        imgSize = img.size();
+
         //DEBUG Draw contours before filtering
         Drawing.drawContours(img, contoursRed, new ColorRGBA("#FFCDD2"), 2);
         Drawing.drawContours(img, contoursBlue, new ColorRGBA("#BBDEFB"), 2);
@@ -217,11 +220,15 @@ public final class Beacon {
         }
     }
 
+    private static Size imgSize = new Size();
+
     public static class BeaconAnalysis {
         private final double confidence;
         private BeaconColor left;
         private BeaconColor right;
         private Rectangle location;
+        public double imageHeight = 1;
+        public double imageWidth = 1;
 
         //TODO Color and CONFIDENCE should make up the results
 
@@ -320,6 +327,63 @@ public final class Beacon {
 
         public String getLocationString() {
             return getCenter().toString();
+        }
+
+        //Movement values
+        private Point beaconWeightedCenter;
+
+        public Point getBeaconWeightedCenter() {
+            return beaconWeightedCenter;
+        }
+
+        //Position analysis
+        private double phi; //Stores are angle relative to the wall to the right of the beacon
+        private double theta; //Stores are angular offset relative to when we are looking straight at the beacon
+
+        public double radius = 0; //The distance from us to the beacon
+
+        private boolean sameBeacon = false;
+
+        //Physical properties in pixels
+        private double pixelsWidth;
+        private double pixelsHeight;
+
+        private double buttonHeight;
+
+        //Derivative of width of beacon in pixels with respect to theta
+        private double dPixelsWdTheta;
+
+        //If no variables are changing call this method so the system can get a sense of the variance due to noise
+        public void stationaryNoiseUpdate(double currWidth, double currHeight, boolean useButton) {
+            //If no position was changed, average the current values
+            pixelsWidth = (pixelsWidth + currWidth)/2;
+            pixelsHeight = (pixelsHeight + currHeight)/2;
+            //Recalculate radius
+            calculateRadius(useButton);
+        }
+
+        //Call if robot is moving
+        public void nonStationaryUpdate(double currHeight, double currButtonHeight, boolean useButton) {
+            pixelsHeight = currHeight;
+            buttonHeight = (currButtonHeight != 0) ? currButtonHeight : buttonHeight;
+            calculateRadius(useButton);
+        }
+
+        //Call this each time theta is changed to get real time update of the derivative of width
+        public void updatedPixelsWdTheta(double currWidth, boolean wasdThetaPositive) {
+            dPixelsWdTheta = (wasdThetaPositive) ? currWidth - pixelsWidth : pixelsWidth - currWidth;
+            pixelsWidth = currWidth;
+        }
+
+        private void calculateRadius(boolean useButton) {
+            double tempRadius;
+            if(useButton)
+                tempRadius = Constants.BEACON_BUTTON_HEIGHT/(2*Math.tan((Constants.CAMERA_VERT_VANGLE*buttonHeight)/(2*imgSize.height)));
+            else
+                tempRadius = Constants.BEACON_HEIGHT/(2*Math.tan((Constants.CAMERA_VERT_VANGLE*pixelsHeight)/(2*imgSize.height)));
+            if(sameBeacon)
+                tempRadius = Math.abs(tempRadius - radius)*Constants.CM_FT_SCALE < Constants.DIST_CHANGE_THRESHOLD ? tempRadius : radius;
+            radius = (tempRadius * Constants.CM_FT_SCALE < Constants.MAX_DIST_FROM_BEACON) ? tempRadius : radius;
         }
 
         @Override

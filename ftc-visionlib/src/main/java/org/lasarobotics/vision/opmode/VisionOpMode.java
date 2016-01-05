@@ -1,10 +1,14 @@
 package org.lasarobotics.vision.opmode;
 
+import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.opmode.extensions.BeaconColorExtension;
 import org.lasarobotics.vision.opmode.extensions.BeaconExtension;
+import org.lasarobotics.vision.opmode.extensions.DistanceLinearization;
 import org.lasarobotics.vision.opmode.extensions.ImageRotationExtension;
 import org.lasarobotics.vision.opmode.extensions.QRExtension;
 import org.lasarobotics.vision.opmode.extensions.VisionExtension;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 /**
@@ -27,6 +31,11 @@ public abstract class VisionOpMode extends VisionOpModeCore {
     protected boolean isEnabled(Extensions extension) {
         return (extensions & extension.id) > 0;
     }
+
+    /*** EXTENSION-SPECIFIC CODE ***/
+    private BeaconColorExtension beaconColorExtension = new BeaconColorExtension();
+    private DistanceLinearization distanceLinearization = new DistanceLinearization();
+    public Beacon.BeaconAnalysis beaconColor = new Beacon.BeaconAnalysis();
 
     protected void enableExtension(Extensions extension) {
         //Don't initialize extension if we haven't ever called init() yet
@@ -96,4 +105,6 @@ public abstract class VisionOpMode extends VisionOpModeCore {
             this.instance = instance;
         }
     }
+
+    public double getFPS() { return fps.getFPS(); }
 }
