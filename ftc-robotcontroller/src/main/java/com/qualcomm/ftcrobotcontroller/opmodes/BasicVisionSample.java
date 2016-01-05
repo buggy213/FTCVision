@@ -53,9 +53,10 @@ public class BasicVisionSample extends VisionOpMode {
         this.setFrameSize(new Size(900, 900));
 
         //Enable extensions. Use what you need.
-        enableExtension(Extensions.BEACON);     //Beacon detection
-        enableExtension(Extensions.QR);         //QR Code detection
-        enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
+        enableExtension(Extensions.BEACON);             //Beacon detection
+        enableExtension(Extensions.QR);                 //QR Code detection
+        enableExtension(Extensions.ROTATION);           //Automatic screen rotation correction
+        enableExtension(Extensions.BEACON_DISTANCE);    //Beacon distance analysis
 
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
@@ -73,6 +74,7 @@ public class BasicVisionSample extends VisionOpMode {
         telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
         telemetry.addData("Beacon Location (Center)", beacon.getAnalysis().getLocationString());
         telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
+        telemetry.addData("Beacon Distance", beaconDistance.getDistance());
         telemetry.addData("QR Error", qr.getErrorReason());
         telemetry.addData("QR String", qr.getText());
         telemetry.addData("Rotation Compensation", rotation.getRotationAngle());

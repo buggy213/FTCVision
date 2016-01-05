@@ -18,19 +18,29 @@ public class DistanceLinearization implements VisionExtension {
     private static final int VALUES_HEAP_SIZE = 5; //How many points should be stored at a time for linearization
     private static final int MAIN_AXIS = SensorManager.AXIS_Z - 1; //Plug in the axis that is horizontal relative
                                                                    //to the beacon
-
     private Accelerometer accelerometer;
     private List<Point> previousValues;
 
     private double currentTime = 0;
 
-    public void init(VisionOpMode opmode) {
+    private double radius = 0;
+
+    /**
+     * Get the distance from the beacon
+     *
+     * @return Distance from beacon in feet
+     */
+    public double getDistance() {
+        return radius;
+    }
+
+    public void init(VisionOpMode opMode) {
         accelerometer = new Accelerometer();
         previousValues = new ArrayList<>();
     }
 
-    public void loop(VisionOpMode visionOpMode) {
-
+    public void loop(VisionOpMode opMode) {
+        VisionOpMode.beacon.getAnalysis().nonStationaryUpdate();
     }
 
     public Mat frame(VisionOpMode opmode, Mat rgba, Mat gray) {
@@ -42,11 +52,11 @@ public class DistanceLinearization implements VisionExtension {
             return rgba;
         }
         currentTime += 1.0/opmode.getFPS();
-        previousValues.add(new Point(currentTime, opmode.beaconColor.radius));
+        previousValues.add(new Point(currentTime, radius));
         if(previousValues.size() > VALUES_HEAP_SIZE)
             previousValues.remove(0);
         if(previousValues.size() > 1)
-            opmode.beaconColor.radius = linearEstimate(opmode.beaconColor.radius);
+            radius = linearEstimate(radius);
         return rgba;
     }
 
@@ -73,6 +83,6 @@ public class DistanceLinearization implements VisionExtension {
     }
 
     public void stop(VisionOpMode opMode) {
-        accelerometer = null;
+        accelerometer.stop();
     }
 }

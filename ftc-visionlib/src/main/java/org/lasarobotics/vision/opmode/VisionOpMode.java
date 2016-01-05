@@ -1,14 +1,11 @@
 package org.lasarobotics.vision.opmode;
 
-import org.lasarobotics.vision.ftc.resq.Beacon;
-import org.lasarobotics.vision.opmode.extensions.BeaconColorExtension;
 import org.lasarobotics.vision.opmode.extensions.BeaconExtension;
 import org.lasarobotics.vision.opmode.extensions.DistanceLinearization;
 import org.lasarobotics.vision.opmode.extensions.ImageRotationExtension;
 import org.lasarobotics.vision.opmode.extensions.QRExtension;
 import org.lasarobotics.vision.opmode.extensions.VisionExtension;
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 /**
@@ -22,20 +19,17 @@ public abstract class VisionOpMode extends VisionOpModeCore {
      * <p/>
      * Add your extension here and in the Extensions class below!
      */
-    protected static BeaconExtension beacon = new BeaconExtension();
-    protected static QRExtension qr = new QRExtension();
-    protected static ImageRotationExtension rotation = new ImageRotationExtension();
+    public static BeaconExtension beacon = new BeaconExtension();
+    public static DistanceLinearization beaconDistance = new DistanceLinearization();
+    public static QRExtension qr = new QRExtension();
+    public static ImageRotationExtension rotation = new ImageRotationExtension();
+
     private int extensions = 0;
     private boolean initialized = false;
 
     protected boolean isEnabled(Extensions extension) {
         return (extensions & extension.id) > 0;
     }
-
-    /*** EXTENSION-SPECIFIC CODE ***/
-    private BeaconColorExtension beaconColorExtension = new BeaconColorExtension();
-    private DistanceLinearization distanceLinearization = new DistanceLinearization();
-    public Beacon.BeaconAnalysis beaconColor = new Beacon.BeaconAnalysis();
 
     protected void enableExtension(Extensions extension) {
         //Don't initialize extension if we haven't ever called init() yet
@@ -92,10 +86,15 @@ public abstract class VisionOpMode extends VisionOpModeCore {
                 disableExtension(extension); //disable and stop
     }
 
+    public double getFPS() {
+        return fps.getFPS();
+    }
+
     public enum Extensions {
         BEACON(2, beacon),
         QR(4, qr),
-        ROTATION(1, rotation); //high priority
+        ROTATION(1, rotation), //high priority
+        BEACON_DISTANCE(8, beaconDistance);
 
         final int id;
         VisionExtension instance;
@@ -105,6 +104,4 @@ public abstract class VisionOpMode extends VisionOpModeCore {
             this.instance = instance;
         }
     }
-
-    public double getFPS() { return fps.getFPS(); }
 }
