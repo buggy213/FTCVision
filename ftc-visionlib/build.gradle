@@ -1,8 +1,20 @@
 apply plugin: 'com.android.library'
 
+buildscript {
+    repositories {
+        mavenCentral()
+        // The next repo is only needed while using SNAPSHOT versions
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    }
+    dependencies {
+        classpath "net.saliman:gradle-cobertura-plugin:2.3.0"
+    }
+}
+apply plugin: 'net.saliman.cobertura'
+
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    buildToolsVersion '23.0.2'
 
     defaultConfig {
         minSdkVersion 16
@@ -20,20 +32,20 @@ android {
 
 repositories {
     flatDir {
-        dirs 'libs'
+        dirs '../libs'
     }
 }
 
 dependencies {
-    compile files('libs/android-support-v4.jar')
+    //noinspection GradleCompatible
+    compile "com.android.support:appcompat-v7:18.0.+"
     compile(name: 'RobotCore-release', ext: 'aar')
-    compile(name: 'Hardware-release', ext: 'aar')
-    compile(name: 'FtcCommon-release', ext: 'aar')
-    compile(name: 'ModernRobotics-release', ext: 'aar')
-    compile(name: 'Analytics-release', ext: 'aar')
-    compile(name: 'WirelessP2p-release', ext: 'aar')
+    //compile(name: 'Hardware-release', ext: 'aar')
+    //compile(name: 'FtcCommon-release', ext: 'aar')
+    //compile(name: 'ModernRobotics-release', ext: 'aar')
+    //compile(name: 'Analytics-release', ext: 'aar')
+    //compile(name: 'WirelessP2p-release', ext: 'aar')
     compile project(':opencv-java')
     compile 'org.jetbrains:annotations:13.0'
-    compile files('libs/zxing-core-3.2.1.jar')
+    //compile files('libs/zxing-core-3.2.1.jar')
 }
-
