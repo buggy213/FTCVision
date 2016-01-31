@@ -37,8 +37,7 @@ repositories {
 }
 
 dependencies {
-    //noinspection GradleCompatible
-    compile "com.android.support:appcompat-v7:18.0.+"
+    compile "com.android.support:appcompat-v7:21.0.+"
     compile(name: 'RobotCore-release', ext: 'aar')
     //compile(name: 'Hardware-release', ext: 'aar')
     //compile(name: 'FtcCommon-release', ext: 'aar')
