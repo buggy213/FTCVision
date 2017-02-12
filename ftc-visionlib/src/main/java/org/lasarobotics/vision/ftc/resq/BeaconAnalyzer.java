@@ -644,9 +644,9 @@ class BeaconAnalyzer {
         //If only one is lit, and is wider than a certain distance, it is bright
         //TODO We are currently assuming that the beacon cannot be in a "bright" state
         if (bestRed == null)
-            return new Beacon.BeaconAnalysis();
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.BLUE, new Rectangle(), 0.0f);
         else if (bestBlue == null)
-            return new Beacon.BeaconAnalysis();
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.RED, new Rectangle(), 0.0f);
 
         //Look at the locations of the largest contours
         //Check to see if the largest red contour is more left-most than the largest right contour
